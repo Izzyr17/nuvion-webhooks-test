@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const crypto = require("crypto");
 
-const {CUSTOMER_WEBHOOK_SECRET} = process.env;
+const NUVION_WEBHOOK_SECRET = process.env.NUVION_WEBHOOK_SECRET;
 
 // Middleware to validate webhook signature
 const validateWebhookSignature = (req, res, next) => {
@@ -19,12 +19,13 @@ const validateWebhookSignature = (req, res, next) => {
         .status(400)
         .json({ error: "Missing webhook verification headers." });
     }
+    console.info({ receivedSignature, receivedTimestamp, receivedWebhookId });
 
     const rawBodyString = JSON.stringify(req.body);
     const signaturePayload = `${receivedTimestamp}.${rawBodyString}`;
 
     const computedSignature = crypto
-      .createHmac("sha256", CUSTOMER_WEBHOOK_SECRET)
+      .createHmac("sha256", NUVION_WEBHOOK_SECRET)
       .update(signaturePayload, "utf-8")
       .digest("hex");
 
@@ -58,7 +59,7 @@ const validateWebhookSignature = (req, res, next) => {
 
 // POST /api/webhooks/nuv
 router.post("/nuv", validateWebhookSignature, (req, res) => {
-  console.log("Received webhook event:", req.body);
+  console.log("Received webhook event:", req.body, req.headers);
   res.status(200).json({ ok: true });
 });
 
