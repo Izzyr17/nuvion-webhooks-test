@@ -9,18 +9,21 @@ const NUVION_WEBHOOK_SECRET = process.env.NUVION_WEBHOOK_SECRET;
 const validateWebhookSignature = (req, res, next) => {
   try {
     const headers = req.headers;
+    console.info({
+      status: "Webhook validation commencing",
+      body: req.body,
+      headers,
+    });
 
     const receivedSignature = headers["x-nuvion-event-signature"];
     const receivedTimestamp = headers["x-nuvion-event-timestamp"];
     const receivedWebhookId = headers["x-nuvion-event-id"];
+
     if (!receivedSignature || !receivedTimestamp || !receivedWebhookId) {
       console.error("Missing webhook verification headers.");
       return res
         .status(400)
         .json({ error: "Missing webhook verification headers." });
-    }
-    if (receivedSignature && receivedTimestamp && receivedWebhookId) {
-      console.info({ receivedSignature, receivedTimestamp, receivedWebhookId });
     }
 
     const rawBodyString = JSON.stringify(req.body);
