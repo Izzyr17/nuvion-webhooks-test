@@ -60,7 +60,7 @@ const validateWebhookSignature = (req, res, next) => {
 };
 
 // POST /api/webhooks/nuv
-router.post("/nuv", (req, res) => {
+router.post("/nuv", validateWebhookSignature, (req, res) => {
   console.info("Received webhook event:", req.body, req.headers);
   res.status(200).json({ ok: true });
 });
