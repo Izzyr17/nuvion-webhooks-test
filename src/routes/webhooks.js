@@ -9,11 +9,7 @@ const NUVION_WEBHOOK_SECRET = process.env.NUVION_WEBHOOK_SECRET;
 const validateWebhookSignature = (req, res, next) => {
   try {
     const headers = req.headers;
-    console.info({
-      status: "Webhook validation commencing",
-      body: req.body,
-      headers,
-    });
+    console.info("status: Webhook validation commencing");
 
     const receivedSignature = headers["x-nuvion-event-signature"];
     const receivedTimestamp = headers["x-nuvion-event-timestamp"];
